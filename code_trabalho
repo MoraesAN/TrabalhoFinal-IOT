@@ -1,0 +1,96 @@
+#define FIRSTSENSOR A0
+#define SECONDSENSOR A1
+#define FIRSTLASER 13
+#define SECONDLASER 12
+
+#define s0 10
+#define s1 11
+#define s2 4
+#define s3 5
+#define OUT 3
+ 
+unsigned long tempoFirst, tempoSecond; 
+int firstLine, secondLine;
+float velocidade;                   //velocidade
+
+int tamanho, cont, val;             //distancia 
+
+int red, blue, green;               //RGB
+
+void setup(){
+  pinMode(s0, OUTPUT);
+  pinMode(s1, OUTPUT);
+  pinMode(s2, OUTPUT);
+  pinMode(s3, OUTPUT);
+  pinMode(OUT, INPUT);             // Sensor RGB
+  digitalWrite(s0, HIGH);
+  digitalWrite(s1, LOW);
+
+  
+  pinMode(FIRSTSENSOR, INPUT);
+  pinMode(SECONDSENSOR, INPUT); //LDRs
+  
+  pinMode(FIRSTLASER, OUTPUT);
+  pinMode(SECONDLASER, OUTPUT);  //LASERS
+  	
+  digitalWrite(FIRSTLASER, HIGH);
+  digitalWrite(SECONDLASER, HIGH);  //Lasers sempre ligados 
+  Serial.begin(9600);
+}
+void loop(){
+  firstLine = analogRead(FIRSTSENSOR);
+  secondLine = analogRead(SECONDSENSOR);	
+  
+  while (firstLine > 700) {
+  	firstLine = analogRead(FIRSTSENSOR);
+  }
+  while (firstLine <= 700) {
+    tempoFirst = micros();
+  	firstLine = analogRead(FIRSTSENSOR);
+  }
+  while (secondLine > 700) {
+  	secondLine = analogRead(SECONDSENSOR);
+  	val = cont;
+    cont = 0;
+  }
+  while (secondLine <= 700) {
+    tempoSecond = micros();
+  	secondLine = analogRead(SECONDSENSOR);
+    cont++;
+  }
+  velocidade = 15/(tempoSecond - tempoFirst); // 15 é a distancia entre os dois LDRs em cm
+  tamanho = val * velocidade;
+  
+  if(tamanho > 0){
+  	Serial.println("velocidade: " + (String)velocidade);	
+  	Serial.println("Tamanho do objeto: " + (String)tamanho + " cm");
+  }
+  cor(); // Verifica cor Aqui
+  
+}
+void cor()
+{
+  digitalWrite(s2, LOW);
+  digitalWrite(s3, LOW);
+  
+  red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  digitalWrite(s3, HIGH);
+  
+  blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  digitalWrite(s2, HIGH);
+  
+  green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  
+  if (red < blue && red < green && red < 100) // VERMELHO
+  {
+    Serial.println("Vermelho");
+  }
+  else if (blue < red && blue < green && blue < 1000) //AZUL
+  {
+    Serial.println("Azul");
+  }
+  else if (green < red && green < blue)  //GREEN
+  {
+    Serial.println("Verde");
+  }
+}
