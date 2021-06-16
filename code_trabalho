@@ -73,13 +73,13 @@ void cor()
   digitalWrite(s2, LOW);
   digitalWrite(s3, LOW);
   
-  red = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  red = pulseIn(OUT, digitalRead(OUT) == HIGH ? LOW : HIGH);
   digitalWrite(s3, HIGH);
   
-  blue = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  blue = pulseIn(OUT, digitalRead(OUT) == HIGH ? LOW : HIGH);
   digitalWrite(s2, HIGH);
   
-  green = pulseIn(out, digitalRead(out) == HIGH ? LOW : HIGH);
+  green = pulseIn(OUT, digitalRead(OUT) == HIGH ? LOW : HIGH);
   
   if (red < blue && red < green && red < 100) // VERMELHO
   {
