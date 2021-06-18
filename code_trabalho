@@ -8,6 +8,10 @@
 #define s2 4
 #define s3 5
 #define OUT 3
+
+#include <LiquidCrystal.h>
+
+LiquidCrystal display(23, 25, 43, 45, 47, 49);
  
 unsigned long tempoFirst, tempoSecond; 
 int firstLine, secondLine;
@@ -17,7 +21,11 @@ int tamanho, cont, val;             //distancia
 
 int red, blue, green;               //RGB
 
-void setup(){
+void setup()
+{
+
+	display.begin(2,16);
+	
   pinMode(s0, OUTPUT);
   pinMode(s1, OUTPUT);
   pinMode(s2, OUTPUT);
@@ -37,7 +45,10 @@ void setup(){
   digitalWrite(SECONDLASER, HIGH);  //Lasers sempre ligados 
   Serial.begin(9600);
 }
-void loop(){
+
+void loop()
+{
+	display.clear();
   firstLine = analogRead(FIRSTSENSOR);
   secondLine = analogRead(SECONDSENSOR);	
   
@@ -58,12 +69,15 @@ void loop(){
   	secondLine = analogRead(SECONDSENSOR);
     cont++;
   }
-  velocidade = 15/(tempoSecond - tempoFirst); // 15 é a distancia entre os dois LDRs em cm
+  velocidade = 15/(tempoSecond - tempoFirst); // 15 ? a distancia entre os dois LDRs em cm
   tamanho = val * velocidade;
   
   if(tamanho > 0){
-  	Serial.println("velocidade: " + (String)velocidade);	
-  	Serial.println("Tamanho do objeto: " + (String)tamanho + " cm");
+  	//Serial.println("velocidade: " + (String)velocidade);	
+		display.setCursor(0,0);
+  	display.print("Tamanho: " + (String)tamanho + "cm");
+		delay(5000);
+		display.clear();
   }
   cor(); // Verifica cor Aqui
   
@@ -81,16 +95,27 @@ void cor()
   
   green = pulseIn(OUT, digitalRead(OUT) == HIGH ? LOW : HIGH);
   
-  if (red < blue && red < green && red < 100) // VERMELHO
+ if (red > (blue+50) && red > (green+50)) // VERMELHO
   {
-    Serial.println("Vermelho");
+		display.setCursor(2,0);
+		display.print("Cor Vermelho");
+
+    //Serial.println("Vermelho");
   }
-  else if (blue < red && blue < green && blue < 1000) //AZUL
+  else if (blue > (red+50) && blue > (green+50)) //AZUL
   {
-    Serial.println("Azul");
+    display.setCursor(2,0);
+		display.print("Cor Azul");
+
+		//Serial.println("Azul");
   }
-  else if (green < red && green < blue)  //GREEN
+  else if (green > (red+50) && green > (blue+50))  //GREEN
   {
-    Serial.println("Verde");
+  	display.setCursor(2,0);
+		display.print("Cor Verde");
+  
+		//Serial.println("Verde");
   }
+	delay(3000);
+	display.clear();  
 }
